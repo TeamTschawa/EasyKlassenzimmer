@@ -3,14 +3,14 @@ package Gui;
 import javax.swing.JFrame;
 
 public class TestGui extends JFrame{
-	KomboboxPanel kp = new KomboboxPanel();
+	ComboboxPanel kp = new ComboboxPanel();
 	
 	public TestGui() {
 		super();
-		this.setSize(700, 700);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.getContentPane().setPreferredSize(kp.size());
+		this.getContentPane().setPreferredSize(kp.getSize());
 		this.add(kp);
+		this.setSize(kp.getSize());
 		this.setResizable(false);
 		this.setVisible(true);
 	}

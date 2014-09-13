@@ -5,7 +5,7 @@ import java.io.*;
 
 public class Parser {
 	
-	void parse(String inputFile)
+	HashMap<String, Integer> parse(String inputFile)
 	{
 		try 
 		{
@@ -20,9 +20,8 @@ public class Parser {
 			
 			while(fileReader.hasNextLine())
 			{
-				String currentLine = fileReader.nextLine();
-				String[] data = currentLine.split(",");
-				if(data[tableHeaderMap.get("Schulart")].trim().toUpperCase().contains("Insgesamt".toUpperCase()))
+				String[] data = fileReader.nextLine().split(",");
+				if(data[tableHeaderMap.get("Schulart")].contains("Insgesamt"))
 				{
 					for(int i = tableHeaderMap.get("Schüler insgesamt"); i <= tableHeaderMap.get("Schüler ausländisch"); i++)
 					{
@@ -40,29 +39,38 @@ public class Parser {
 					}
 				}
 			}
-			System.out.println("Finished");
+			
+			HashMap<String, Integer> output = new HashMap<>();
 			for(String val : dataMap.keySet())
 			{
-				System.out.println("Regionalschlüssel: " + val);
 				int total = 0;
 				int females = 0;
 				for(Map.Entry<String, Integer> value : dataMap.get(val).entrySet())
 				{
+					if(output.get(value.getKey()) != null)
+						output.put(value.getKey(), output.get(value.getKey()) + value.getValue());
+					else
+						output.put(value.getKey(), value.getValue());
+						
 					if(value.getKey().contains("Schüler insgesamt"))
 						total = value.getValue();
 					
 					if(value.getKey().contains("Schüler weiblich"))
 						females = value.getValue();
-					System.out.printf("\t%s: %s\n", value.getKey(), value.getValue());
+					
 				}
-				System.out.printf("\tSchüler männlich: %s\n", total - females);
+				if(output.get("Schüler männlich") != null)
+					output.put("Schüler männlich", output.get("Schüler männlich") + (total - females));
+				else
+					output.put("Schüler männlich", total - females);
 			}
-			
+			return output;
 		} 
 		catch (FileNotFoundException e) 
 		{
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	private String getName(HashMap<String, Integer> map, int index)
@@ -73,11 +81,6 @@ public class Parser {
 				return key;
 		}
 		return "";
-	}
-	
-	public static void main(String[] args)
-	{
-		new Parser().parse("/home/oliver/Downloads/data.csv");
 	}
 	
 }

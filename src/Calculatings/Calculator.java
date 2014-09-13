@@ -37,8 +37,8 @@ public class Calculator {
 		//System.out.print();	// debugging
 		
 		
-		//Classroom avgClass = new Classroom();
-		return null;
+		Classroom avgClass = new Classroom(studentsPerTeacher, percentageGirls, percentageBoys, percentageForeigners, girlsInClass, boysInClass, foreignersInClass);
+		return avgClass;
 	}
 	
 	public static void main(String[] args)

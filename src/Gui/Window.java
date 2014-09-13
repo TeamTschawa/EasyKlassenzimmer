@@ -1,5 +1,7 @@
 package Gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -7,17 +9,17 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
 
-public class Window extends JFrame {
+public class Window extends JFrame implements MouseListener {
 
 	Controller con;
 
@@ -25,6 +27,8 @@ public class Window extends JFrame {
 
 	JTabbedPane tabbPane = new JTabbedPane();
 	JPanel gender = new JPanel(null, true);
+
+	ComboboxPanel combobox = new ComboboxPanel(this);
 
 	JButton arrowLeft;
 	JButton arrowRight;
@@ -42,6 +46,7 @@ public class Window extends JFrame {
 		int y = (d.height - getSize().height) / 2;
 		setLocation(x, y);
 		this.setResizable(false);
+		this.addMouseListener(this);
 		cp = getContentPane();
 		cp.setLayout(null);
 
@@ -59,6 +64,11 @@ public class Window extends JFrame {
 		ImageIcon IconArRight = new ImageIcon(scaledImage);
 
 		// Komponenten
+
+		combobox.setLocation(frameWidth / 2 - combobox.getWidth() / 2, 140);
+		combobox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		cp.add(combobox);
+
 		tabbPane.setLocation(0, 150);
 		tabbPane.setSize(frameWidth, frameHeight - tabbPane.getY());
 		tabbPane.add("Geschlecht", gender);
@@ -66,10 +76,11 @@ public class Window extends JFrame {
 
 		arrowLeft = new JButton(IconArLeft);
 		arrowLeft.setSize(100, 100);
-		arrowLeft.setLocation((int) (frameWidth * 0.2 - arrowLeft.getWidth() / 2), 20);
+		arrowLeft.setLocation(
+				(int) (frameWidth * 0.2 - arrowLeft.getWidth() / 2), 30);
 		arrowLeft.setFocusable(false);
 		arrowLeft.setContentAreaFilled(false);
-		arrowLeft.setCursor(new Cursor(HAND_CURSOR));
+		arrowLeft.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		arrowLeft.addActionListener(new ActionListener() {
 
 			@Override
@@ -82,10 +93,11 @@ public class Window extends JFrame {
 
 		arrowRight = new JButton(IconArRight);
 		arrowRight.setSize(100, 100);
-		arrowRight.setLocation((int) (frameWidth * 0.79 - arrowLeft.getWidth() / 2), 20);
+		arrowRight.setLocation(
+				(int) (frameWidth * 0.79 - arrowLeft.getWidth() / 2), 30);
 		arrowRight.setFocusable(false);
 		arrowRight.setContentAreaFilled(false);
-		arrowRight.setCursor(new Cursor(HAND_CURSOR));
+		arrowRight.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		arrowRight.addActionListener(new ActionListener() {
 
 			@Override
@@ -96,12 +108,16 @@ public class Window extends JFrame {
 		});
 		cp.add(arrowRight);
 
+		Image img = Toolkit.getDefaultToolkit().getImage(
+				"blazon/" + combobox.fileList[con.currentState].getName());
+
 		blazon.setSize(100, 100);
-		blazon.setLocation(frameWidth / 2 - blazon.getWidth() / 2, 20);
-		blazon.setText("TEST");
+		blazon.setLocation(frameWidth / 2 - blazon.getWidth() / 2, 30);
 		blazon.setFocusable(false);
 		blazon.setContentAreaFilled(false);
-		blazon.setCursor(new Cursor(HAND_CURSOR));
+		blazon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		blazon.setIcon(new ImageIcon(img.getScaledInstance(blazon.getWidth(),
+				blazon.getHeight(), Image.SCALE_SMOOTH)));
 		blazon.addActionListener(new ActionListener() {
 
 			@Override
@@ -111,9 +127,37 @@ public class Window extends JFrame {
 		});
 		cp.add(blazon);
 
+		for (Component c : cp.getComponents()) {
+			c.addMouseListener(this);
+		}
+
 		// Ende Komponenten
 
 		this.setVisible(true);
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+		if (combobox.isVisible()) {
+			int x = e.getXOnScreen() - this.getX() - combobox.getX() - 1;
+			int y = e.getYOnScreen() - this.getY() - combobox.getY() - 32;
+
+			if (!combobox.contains(x, y)) {
+				combobox.setVisible(false);
+			}
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
 }

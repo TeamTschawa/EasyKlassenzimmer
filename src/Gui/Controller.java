@@ -13,7 +13,7 @@ public class Controller {
 	int currentState = 0;
 
 	public Controller() {
-		win = new Window("TEST", this);
+		win = new Window("EasyKlassenzimmer", this);
 	}
 
 	public void left(ActionEvent e) {

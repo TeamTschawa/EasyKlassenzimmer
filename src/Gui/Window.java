@@ -18,6 +18,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Window extends JFrame implements MouseListener {
 
@@ -26,7 +28,8 @@ public class Window extends JFrame implements MouseListener {
 	Container cp;
 
 	JTabbedPane tabbPane = new JTabbedPane();
-	JPanel gender = new JPanel(null, true);
+	Gender gender = new Gender(this);
+	Immigration immigration = new Immigration(this);
 
 	ComboboxPanel combobox = new ComboboxPanel(this);
 
@@ -38,7 +41,7 @@ public class Window extends JFrame implements MouseListener {
 		super(title);
 		this.setLayout(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		int frameWidth = 800;
+		int frameWidth = 700;
 		int frameHeight = 800;
 		this.setSize(frameWidth, frameHeight);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -49,6 +52,9 @@ public class Window extends JFrame implements MouseListener {
 		this.addMouseListener(this);
 		cp = getContentPane();
 		cp.setLayout(null);
+		Image icon = Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("ClassroomIcon.png"));
+		this.setIconImage(icon);
 
 		con = _con;
 
@@ -66,12 +72,14 @@ public class Window extends JFrame implements MouseListener {
 		// Komponenten
 
 		combobox.setLocation(frameWidth / 2 - combobox.getWidth() / 2, 140);
-		combobox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		combobox.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		cp.add(combobox);
 
 		tabbPane.setLocation(0, 150);
 		tabbPane.setSize(frameWidth, frameHeight - tabbPane.getY());
-		tabbPane.add("Geschlecht", gender);
+		tabbPane.addTab("Geschlecht", gender);
+		tabbPane.addTab("Immigranten", immigration);
+
 		cp.add(tabbPane);
 
 		arrowLeft = new JButton(IconArLeft);
@@ -127,6 +135,8 @@ public class Window extends JFrame implements MouseListener {
 		});
 		cp.add(blazon);
 
+		this.repaint();
+
 		for (Component c : cp.getComponents()) {
 			c.addMouseListener(this);
 		}
@@ -138,7 +148,7 @@ public class Window extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+
 		if (combobox.isVisible()) {
 			int x = e.getXOnScreen() - this.getX() - combobox.getX() - 1;
 			int y = e.getYOnScreen() - this.getY() - combobox.getY() - 32;
